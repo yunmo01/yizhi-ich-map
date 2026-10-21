@@ -673,3 +673,33 @@ mark { background: rgba(242, 193, 78, .28); color: #ffe9ad; padding: 0 2px; bord
 ::-webkit-scrollbar-track { background: rgba(255, 255, 255, .05); }
 ::-webkit-scrollbar-thumb { background: rgba(242, 193, 78, .5); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(242, 193, 78, .8); }
+
+/* ================= 移动端访问拦截 ================= */
+.mobile-mask { display: none; }
+@media screen and (max-width: 1024px) {
+  .mobile-mask {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #140f1d;
+    z-index: 99999;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .mask-content { max-width: 400px; color: #f2c14e; }
+  .mask-icon { font-size: 60px; margin-bottom: 20px; }
+  .mask-content h1 {
+    font-size: 24px;
+    margin: 0 0 15px 0;
+    color: #fff;
+    font-family: "Source Han Sans SC", "Noto Sans CJK SC", "黑体", "SimHei", sans-serif;
+  }
+  .mask-content p { font-size: 14px; color: #9c8fb5; line-height: 1.6; margin: 0 0 10px 0; }
+  body > *:not(.mobile-mask) { display: none !important; }
+}
