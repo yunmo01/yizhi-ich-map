@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>指尖上的非遗 · 国家级非遗代表性传承人数据图谱</title>
+  <link rel="stylesheet" href="css/screen.css">
+</head>
+<body>
+  <header class="hd">
+    <div class="hd-brand">
+      <a href="index.html" class="hd-back" title="返回主页">← 主页</a>
+      <div class="hd-seal" aria-hidden="true">遗</div>
+      <div class="hd-title">
+        <h1>指尖上的非遗</h1>
+        <p>国家级非物质文化遗产代表性传承人 · 数据图谱</p>
+      </div>
+    </div>
+    <div class="hd-kpis" id="kpis">
+      <div class="kpi"><b id="kpi-total">--</b><span>国家级传承人</span></div>
+      <div class="kpi"><b id="kpi-prov">--</b><span>覆盖省级行政区</span></div>
+      <div class="kpi"><b id="kpi-batch">--</b><span>认定批次</span></div>
+      <div class="kpi kpi-dead"><b id="kpi-dead">--</b><span>已故（文本识别）</span></div>
+      <div class="kpi"><b id="kpi-minor">--</b><span>少数民族传承人</span></div>
+    </div>
+    <div class="hd-ctrl">
+      <select id="f-type" title="门类"><option value="">十大门类 · 全部</option></select>
+      <select id="f-batch" title="批次"><option value="">认定批次 · 全部</option></select>
+      <select id="f-sex" title="性别">
+        <option value="">性别 · 全部</option><option>男</option><option>女</option>
+      </select>
+      <button id="f-reset" class="btn-reset">重置筛选</button>
+    </div>
+  </header>
+
+  <div class="filter-bar">
+    <span class="fb-label">当前视图</span>
+    <span class="fb-tags" id="filter-tags"><em class="tag tag-all">全国 · 全部门类 · 全批次</em></span>
+    <span class="hd-clock" id="clock" title="实时时间戳">--:--:--</span>
+    <span class="selfcheck" id="selfcheck" title="系统自检">⟳</span>
+    <div class="sc-panel" id="sc-panel" hidden></div>
+    <span class="fb-hint">点击地图省份可联动筛选全部图表</span>
+  </div>
+
+  <main class="grid" id="grid">
+    <section class="panel p-type">
+      <h2>十大门类构成 <i>按传承人数</i></h2>
+      <div class="chart" id="chart-type"></div>
+    </section>
+
+    <section class="panel p-map">
+      <h2>传承人地理分布 <i>省级密度 · 点击联动</i></h2>
+      <div class="chart" id="chart-map"></div>
+    </section>
+
+    <section class="panel p-sex">
+      <h2>性别结构</h2>
+      <div class="chart" id="chart-sex"></div>
+      <div class="chart-note" id="sex-note"></div>
+    </section>
+
+    <section class="panel p-batch">
+      <h2>六批次认定历程 <i>2007 → 2025</i></h2>
+      <div class="chart" id="chart-batch"></div>
+    </section>
+
+    <section class="panel p-prov">
+        <h2>省份 TOP6 <i>传承人数</i></h2>
+      <div class="chart" id="chart-prov"></div>
+    </section>
+  </main>
+
+  <main class="grid2">
+    <section class="panel p-nation">
+      <h2>民族构成 <i id="nation-note">对照七人普：少数民族占 8.89%</i></h2>
+      <div class="chart" id="chart-nation"></div>
+    </section>
+    <section class="panel p-decade">
+      <h2>出生年代分布 <i>传承人年龄结构</i></h2>
+      <div class="chart" id="chart-decade"></div>
+    </section>
+    <section class="panel p-bubble">
+      <h2>门类传承健康度 <i>项目子项 × 传承人 · 红=偏危</i></h2>
+      <div class="chart" id="chart-bubble"></div>
+    </section>
+    <section class="panel p-story">
+      <h2>数据叙事 <i>随筛选实时更新</i></h2>
+      <div class="story" id="story">正在载入…</div>
+    </section>
+  </main>
+
+  <footer class="ft">
+    数据来源：中国非物质文化遗产网 ihchina.cn（国家级代表性项目/传承人公开清单）· 民族人口参考：第七次全国人口普查（国家统计局）
+    · 页面装饰纹样为团队自绘几何图案
+  </footer>
+
+  <script src="assets/vendor/echarts.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/charts/theme.js"></script>
+  <script src="js/charts/map.js"></script>
+  <script src="js/charts/type.js"></script>
+  <script src="js/charts/batch.js"></script>
+  <script src="js/charts/sex.js"></script>
+  <script src="js/charts/prov.js"></script>
+  <script src="js/charts/nation.js"></script>
+  <script src="js/charts/decade.js"></script>
+  <script src="js/charts/bubble.js"></script>
+  <script src="js/charts/story.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/clock.js"></script>
+  <script src="js/selfcheck.js"></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>指尖上的非遗</title>
+  <link rel="stylesheet" href="css/screen.css?v=20261021">
+</head>
+<body class="home">
+  <!-- 顶部动态通栏：站内事实轮播 -->
+  <div class="news-ticker" id="news-ticker" aria-label="最新动态">
+    <span class="nt-label"><b class="nt-dot" aria-hidden="true"></b>最新动态</span>
+    <div class="nt-viewport">
+      <div class="nt-track" id="nt-track">
+        <span class="nt-item"><b>名录</b>第六批国家级代表性传承人认定 942 人（2025 年）</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 背景层：非遗影像轮播 → 深色蒙版 → 粒子漩涡 -->
+  <div class="home-bg" aria-hidden="true">
+    <div class="home-bg-slide on" style="background-image:url(/img/home/bg1.jpg)"></div>
+    <div class="home-bg-slide" style="background-image:url(/img/home/bg2.jpg)"></div>
+    <div class="home-bg-slide" style="background-image:url(/img/home/bg3.jpg)"></div>
+    <div class="home-bg-slide" style="background-image:url(/img/home/bg4.jpg)"></div>
+    <div class="home-bg-slide" style="background-image:url(/img/home/bg5.jpg)"></div>
+    <div class="home-bg-slide" style="background-image:url(/img/home/bg6.jpg)"></div>
+  </div>
+  <div class="home-veil" aria-hidden="true"></div>
+  <canvas id="vortex" aria-hidden="true"></canvas>
+
+  <div class="home-wrap">
+    <div class="home-seal" aria-hidden="true">遗</div>
+    <h1 class="home-title">指尖上的非遗</h1>
+    <p class="home-lead">为文化保护工作者与社会公众，提供传承人地域、门类、代际分布的全景视角</p>
+    <p class="home-sub">国家级非物质文化遗产代表性传承人 · 数据图谱</p>
+
+    <div class="home-rule" aria-hidden="true">
+      <b class="ln"></b><b class="dm dm-teal"></b><b class="dm dm-gold"></b><b class="dm dm-red"></b><b class="ln"></b>
+    </div>
+
+    <div class="home-kpi">
+      <div class="kpi"><b>3,995</b><span>国家级代表性传承人</span></div>
+      <div class="kpi"><b>3,610</b><span>非遗项目子项</span></div>
+      <div class="kpi"><b>34</b><span>省级行政区覆盖</span></div>
+      <div class="kpi"><b>6,663</b><span>官方简介条目</span></div>
+    </div>
+
+    <div class="home-btns">
+      <a class="home-btn" href="dashboard.html">
+        <span>进入数据图谱</span>
+        <i>MAP →</i>
+      </a>
+      <a class="home-btn home-btn-alt" href="search.html">
+        <span>资料查询</span>
+        <i>SEARCH →</i>
+      </a>
+    </div>
+
+    <div class="home-timeline" aria-label="六批次认定历程 2007 至 2025">
+      <div class="tl-line" aria-hidden="true"></div>
+      <div class="t-nodes">
+        <div class="t-node"><b>2007</b><span>第一批</span><i>226 人</i></div>
+        <div class="t-node"><b>2008</b><span>第二批</span><i>550 人</i></div>
+        <div class="t-node"><b>2009</b><span>第三批</span><i>705 人</i></div>
+        <div class="t-node"><b>2012</b><span>第四批</span><i>495 人</i></div>
+        <div class="t-node"><b>2018</b><span>第五批</span><i>1,077 人</i></div>
+        <div class="t-node"><b>2025</b><span>第六批</span><i>942 人</i></div>
+      </div>
+    </div>
+
+    <!-- 后续界面入口：在此处添加新的导航卡片/链接 -->
+
+  </div>
+
+  <footer class="ft home-ft">
+    数据来源：中国非物质文化遗产网 ihchina.cn · 民族人口参考：第七次全国人口普查（国家统计局）
+    · 背景影像：ihchina.cn 官方图集 · 页面装饰纹样为团队自绘几何图案
+  </footer>
+
+  <!-- 动态详情弹层：点通栏条目打开，Esc / 关闭钮 / 点遮罩收起 -->
+  <div class="news-modal" id="news-modal" hidden>
+    <div class="nm-backdrop" data-nm-close></div>
+    <div class="nm-card" role="dialog" aria-modal="true" aria-labelledby="nm-title">
+      <button class="nm-close" id="nm-close" aria-label="关闭" data-nm-close>&times;</button>
+      <span class="nm-tag" id="nm-tag"></span>
+      <h2 class="nm-title" id="nm-title"></h2>
+      <div class="nm-body" id="nm-body"></div>
+      <div class="nm-source">
+        <span class="nm-src-label">来源</span>
+        <span class="nm-src-name" id="nm-src-name"></span>
+        <a class="nm-src-btn" id="nm-src-btn" href="#" target="_blank" rel="noopener noreferrer">官网直连 ↗</a>
+        <a class="nm-link-btn" id="nm-link-btn" href="#"></a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/home.js?v=20261021" defer></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>资料查询 · 指尖上的非遗</title>
+  <link rel="stylesheet" href="css/screen.css">
+</head>
+<body class="search-page">
+  <header class="hd">
+    <a class="hd-back" href="index.html">← 主页</a>
+    <div class="hd-brand">
+      <div class="hd-seal">遗</div>
+      <div class="hd-title">
+        <h1>资料查询</h1>
+        <p>国家级非遗代表性项目与传承人 · 官方简介全文检索</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-wrap">
+    <div class="search-bar">
+      <input id="q" type="search" placeholder="输入关键词，如：苗族古歌、昆曲、刺绣、某传承人姓名…" autocomplete="off">
+      <div class="kind-tabs" id="kind-tabs">
+        <button class="kind-tab active" data-kind="all">全部</button>
+        <button class="kind-tab" data-kind="project">项目</button>
+        <button class="kind-tab" data-kind="inheritor">传承人</button>
+      </div>
+      <select id="f-type">
+        <option value="">全部门类</option>
+      </select>
+      <button class="btn-search" id="btn-search">检索</button>
+    </div>
+    <div class="search-meta" id="search-meta">支持按名称、地区、简介正文检索 · 语料来自中国非物质文化遗产网公开数据</div>
+
+    <div class="search-main">
+      <section class="panel s-results">
+        <h2>检索结果 <i id="result-count"></i></h2>
+        <div class="result-list" id="result-list">
+          <div class="result-empty">输入关键词开始检索，试试「苗族古歌」「昆曲」「侗族大歌」</div>
+        </div>
+      </section>
+
+      <aside class="s-side">
+        <section class="panel">
+          <h2>非遗小知识</h2>
+          <div class="kb-cards">
+            <details class="kb-card" open>
+              <summary>什么是非遗？</summary>
+              <p>非物质文化遗产指被各社区、群体视为其文化遗产组成部分的各种社会实践、观念表述、表现形式、知识与技能，以及与之相关的工具、实物、手工艺品和文化空间（联合国教科文组织《保护非物质文化遗产公约》）。我国《非物质文化遗产法》于2011年施行。</p>
+            </details>
+            <details class="kb-card">
+              <summary>十大门类</summary>
+              <p>国家级名录将非遗分为十大门类：民间文学、传统音乐、传统舞蹈、传统戏剧、曲艺、传统体育游艺与杂技、传统美术、传统技艺、传统医药、民俗。本页检索覆盖全部门类。</p>
+            </details>
+            <details class="kb-card">
+              <summary>六批国家级代表性传承人</summary>
+              <p>国家级非物质文化遗产代表性传承人认定工作已开展六批：2007、2008、2009、2012、2018、2025年，合计3995人（含已故）。可在数据图谱中查看批次历程。</p>
+            </details>
+            <details class="kb-card">
+              <summary>代表性传承人制度</summary>
+              <p>代表性传承人指经文化和旅游部认定、承担非遗传承使命的代表性个人。认定考虑其掌握的传统知识、技艺水平、传承能力与社会影响；已故者的认定记录仍保留在名录中，用于研究与纪念。</p>
+            </details>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>官方延伸阅读</h2>
+          <ul class="ext-links">
+            <li><a href="https://www.ihchina.cn/" target="_blank" rel="noopener">中国非物质文化遗产网 · ihchina.cn</a></li>
+            <li><a href="https://www.ihchina.cn/representative.html" target="_blank" rel="noopener">国家级代表性传承人名录（官网）</a></li>
+            <li><a href="https://www.mct.gov.cn/" target="_blank" rel="noopener">中华人民共和国文化和旅游部</a></li>
+          </ul>
+          <p class="ext-note">站内语料收录项目简介3610条、传承人简介3053条；其余深度内容与最新动态请访问官方渠道。</p>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="ft">
+    数据来源：中国非物质文化遗产网 ihchina.cn（国家级代表性项目/传承人公开清单）
+    · 页面装饰纹样为团队自绘几何图案
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/search.js"></script>
+</body>
+</html>
