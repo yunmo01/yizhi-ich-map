@@ -59,13 +59,98 @@
   }
 
   /* ---------- 刷新（联动核心） ---------- */
+  function syncURL() {
+    const qs = new URLSearchParams();
+    Object.entries(state.filter).forEach(([k, v]) => { if (v) qs.set(k, v); });
+    const q = qs.toString();
+    history.replaceState(null, "", q ? `?${q}` : location.pathname);
+  }
+
   let seq = 0;
   async function refresh() {
+    syncURL();
     renderTags();
     const my = ++seq;
     const summary = await API.summary(state.filter);
     if (my !== seq) return; // 竞态保护：丢弃过期响应
     updateAll(summary);
+    if (roster.open) loadRoster();
+  }
+
+  /* ---------- 名单弹层（从数字到人 + CSV 导出） ---------- */
+  const roster = { open: false, seq: 0 };
+
+  function rosterScopeText() {
+    const f = state.filter;
+    return [f.province, f.type, f.batch ? `第${f.batch}批` : "", f.sex].filter(Boolean).join(" · ") || "全国";
+  }
+
+  function esc(s) {
+    return String(s ?? "").replace(/[&<>"']/g, (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  async function loadRoster() {
+    const my = ++roster.seq;
+    document.getElementById("roster-scope").textContent = rosterScopeText();
+    document.getElementById("roster-list").innerHTML = '<p class="rm-loading">正在载入…</p>';
+    const data = await API.inheritors({ ...state.filter, limit: 200 });
+    if (my !== roster.seq || !roster.open) return;
+    document.getElementById("roster-count").textContent =
+      `共 ${window.fmt(data.total)} 位 · 显示前 ${data.items.length} 条（导出 CSV 查看全部）`;
+    const list = document.getElementById("roster-list");
+    if (!data.items.length) {
+      list.innerHTML = '<p class="rm-loading">当前口径无记录</p>';
+      return;
+    }
+    list.innerHTML = data.items.map((r) => `
+      <div class="rm-row">
+        <b class="rm-name">${esc(r.name)}</b>
+        <span class="rm-proj">${esc(r.project)}</span>
+        <span class="rm-meta">${esc(r.type)} · ${esc(r.batch_label)} · ${esc(r.sex)}</span>
+        <span class="rm-region">${esc(r.region)}</span>
+        <a class="rm-link" href="search.html?q=${encodeURIComponent(r.name)}" target="_blank" rel="noopener">检索 ↗</a>
+      </div>`).join("");
+  }
+
+  async function exportRosterCSV() {
+    const btn = document.getElementById("roster-csv");
+    btn.disabled = true;
+    const old = btn.textContent;
+    btn.textContent = "生成中…";
+    try {
+      const data = await API.inheritors({ ...state.filter, limit: 5000 });
+      const head = ["姓名", "性别", "民族", "门类", "项目", "省份", "地区", "批次"];
+      const rows = data.items.map((r) =>
+        [r.name, r.sex, r.nation, r.type, r.project, r.province, r.region, r.batch_label]);
+      const csv = "\uFEFF" + [head, ...rows]
+        .map((cols) => cols.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(","))
+        .join("\r\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `传承人名单_${rosterScopeText().replace(/[ ·]/g, "_")}_${data.total}条.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = old;
+    }
+  }
+
+  function bindRoster() {
+    const modal = document.getElementById("roster-modal");
+    document.getElementById("f-roster").addEventListener("click", () => {
+      roster.open = true;
+      modal.hidden = false;
+      loadRoster();
+    });
+    modal.querySelectorAll("[data-rm-close]").forEach((el) =>
+      el.addEventListener("click", () => { roster.open = false; modal.hidden = true; }));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && roster.open) { roster.open = false; modal.hidden = true; }
+    });
+    document.getElementById("roster-csv").addEventListener("click", exportRosterCSV);
   }
 
   /* ---------- 控件绑定 ---------- */
@@ -104,6 +189,7 @@
   /* ---------- 启动 ---------- */
   async function boot() {
     bindControls();
+    bindRoster();
     // 1. 先起图（空数据），保证布局稳定
     await window.ChartMap.init((province) => {
       // 地图点击 = 切换式筛选（再点同省取消）

@@ -38,6 +38,26 @@
         `${topNation ? `；${topNation.name} 为其人数最多的少数民族（${topNation.value} 人）` : ""}。</p>`
       );
 
+      // ④ 保护提示：项目多、在册传承人少的门类结构最单薄
+      const projByType = new Map((summary.projects_by_type || []).map((r) => [r.name, r.value]));
+      const ratios = (summary.by_type || [])
+        .filter((r) => r.name !== "未知" && projByType.get(r.name))
+        .map((r) => ({
+          name: r.name,
+          inh: r.value,
+          prj: projByType.get(r.name),
+          ratio: r.value / projByType.get(r.name),
+        }))
+        .filter((r) => r.inh > 0);
+      if (ratios.length) {
+        const thin = ratios.slice().sort((a, b) => a.ratio - b.ratio)[0];
+        lines.push(
+          `<p><b class="s-gold">④ 保护提示：</b>按「项目子项多、在册传承人少」的口径，` +
+          `<b>${thin.name}</b> 结构最单薄（${window.fmt(thin.prj)} 个子项 / ${window.fmt(thin.inh)} 位传承人，` +
+          `人均 ${thin.ratio.toFixed(2)}）——名录易扩，人的接续更难，建议优先关注该门类的代际培养。</p>`
+        );
+      }
+
       if (filter.province || filter.type || filter.batch || filter.sex) {
         lines.push(`<p class="s-hint">▲ 以上结论随筛选实时重算；点击标签 × 或“重置筛选”返回全国视图。</p>`);
       }

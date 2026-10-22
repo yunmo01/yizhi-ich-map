@@ -48,6 +48,7 @@
     <span class="hd-clock" id="clock" title="实时时间戳">--:--:--</span>
     <span class="selfcheck" id="selfcheck" title="系统自检">⟳</span>
     <div class="sc-panel" id="sc-panel" hidden></div>
+    <button id="f-roster" class="fb-roster" title="查看当前口径下的传承人名单">当前口径名单</button>
     <span class="fb-hint">点击地图省份可联动筛选全部图表</span>
   </div>
 
@@ -102,6 +103,20 @@
     数据来源：中国非物质文化遗产网 ihchina.cn（国家级代表性项目/传承人公开清单）· 民族人口参考：第七次全国人口普查（国家统计局）
     · 页面装饰纹样为团队自绘几何图案
   </footer>
+
+  <!-- 当前口径传承人名单弹层（从数字到人） -->
+  <div class="roster-modal" id="roster-modal" hidden>
+    <div class="rm-backdrop" data-rm-close></div>
+    <div class="rm-card">
+      <button class="rm-close" data-rm-close title="关闭">×</button>
+      <h3 class="rm-title">当前口径传承人名录 <i id="roster-scope">全国</i></h3>
+      <div class="rm-bar">
+        <span class="rm-count" id="roster-count">--</span>
+        <button class="rm-csv" id="roster-csv">导出当前口径全部名单 CSV</button>
+      </div>
+      <div class="rm-list" id="roster-list">正在载入…</div>
+    </div>
+  </div>
 
   <script src="assets/vendor/echarts.min.js"></script>
   <script src="js/api.js"></script>
