@@ -89,6 +89,17 @@ document.documentElement.classList.add('js');
   const modal = document.getElementById('news-modal');
   let newsItems = [];
 
+  /* 站内直达兜底：根绝对路由(/search)与旧缓存一律转同目录 .html，任何托管下都直达 */
+  function resolveSiteLink(link) {
+    if (!link || /^(https?:)?\/\//.test(link)) return link;
+    const qi = link.indexOf('?');
+    const path = qi >= 0 ? link.slice(0, qi) : link;
+    const qs = qi >= 0 ? link.slice(qi) : '';
+    if (!path.startsWith('/')) return link;
+    const name = path.slice(1).replace(/\.html$/, '');
+    return (name || 'index') + '.html' + qs;
+  }
+
   function openNews(i) {
     const n = newsItems[i];
     if (!n || !modal) return;
@@ -100,7 +111,7 @@ document.documentElement.classList.add('js');
     srcBtn.href = n.source_url || '#';
     const linkBtn = document.getElementById('nm-link-btn');
     if (n.link) {
-      linkBtn.href = n.link;
+      linkBtn.href = resolveSiteLink(n.link);
       linkBtn.textContent = n.link_name || '站内直达';
       linkBtn.hidden = false;
     } else {
