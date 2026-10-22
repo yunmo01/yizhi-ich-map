@@ -26,7 +26,7 @@ body {
     repeating-linear-gradient(45deg, rgba(255, 255, 255, .014) 0 2px, transparent 2px 14px),
     var(--bg);
   display: flex; flex-direction: column;
-  padding: 14px 18px 8px;
+  padding: 14px 18px 40px;
 }
 
 /* ============ 顶部 ============ */
@@ -211,11 +211,23 @@ body {
 .s-teal { color: var(--teal); }
 .s-hint { color: var(--muted); font-size: 11px; opacity: .85; }
 
-/* ============ 页脚 ============ */
+/* ============ 页脚：固定底座，始终浮于图表与面板之上 ============ */
 .ft {
-  margin-top: 8px; padding: 6px 4px;
-  font-size: 11px; color: var(--muted); text-align: center; letter-spacing: 1px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  margin-top: 0;
+  padding: 10px 4px 8px;
+  font-size: 11px;
+  color: rgba(239, 232, 220, .72);
+  text-align: center;
+  letter-spacing: 1px;
+  z-index: 950;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(20, 15, 29, .97) 0%, rgba(20, 15, 29, .78) 70%, transparent 100%);
 }
+.ft a { pointer-events: auto; }
 
 @media (max-width: 1400px) {
   .hd-kpis .kpi { min-width: 96px; }
@@ -306,7 +318,6 @@ body.home { position: relative; overflow-x: hidden; }
 #vortex { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 2; pointer-events: none; }
 .home-wrap { position: relative; z-index: 3; text-shadow: 0 1px 4px rgba(0, 0, 0, .9), 0 2px 18px rgba(0, 0, 0, .6); }
 body.home .home-sub, body.home .home-kpi span, body.home .t-node span { color: #b7a9d4; }
-body.home .ft { position: relative; z-index: 3; }
 
 /* 入场编排：印章 → 标题 → 导语 → … → 时间轴 */
 @keyframes home-up {
@@ -548,7 +559,7 @@ body.home .home-timeline { animation-delay: .9s; }
 .hd-back:hover { color: var(--gold); border-color: var(--gold); }
 
 /* ============ 资料查询页 ============ */
-body.search-page { height: auto; min-height: 100vh; padding-bottom: 10px; }
+body.search-page { height: auto; min-height: 100vh; padding-bottom: 44px; }
 body.search-page .hd::after { display: none; } /* 查询页去掉顶部彩色虚线 */
 .search-wrap {
   flex: 1; display: flex; flex-direction: column;
