@@ -5,6 +5,13 @@
 (function () {
   const $badge = document.getElementById("selfcheck");
   if (!$badge) return; // 仅大屏页启用
+  if (location.protocol === "file:") {
+    // 双击打开（file://）：浏览器禁止加载本地数据，自检无意义；由 guardfile.js 全屏指引接管
+    $badge.className = "selfcheck sc-bad";
+    $badge.textContent = "⚠";
+    $badge.title = "双击打开（file://）无法加载数据 —— 请改用在线地址，或运行 python -m http.server 8000";
+    return;
+  }
 
   const $panel = document.getElementById("sc-panel");
   const WEEK_TIP = "系统自检";

@@ -54,16 +54,17 @@
       return;
     }
     $list.innerHTML = '<div class="result-empty">检索中…</div>';
-    const data = await API.search({ q, kind: state.kind, type: state.type, limit: 500 });
-    $count.textContent = data.total ? `命中 ${data.total} 条` : "";
-    $meta.textContent = data.total
-      ? `「${q}」命中 ${data.total} 条 · 点击卡片可展开官方简介全文`
-      : `「${q}」无命中 · 可尝试更短的关键词，或访问底部官方链接`;
-    if (!data.items.length) {
-      $list.innerHTML = '<div class="result-empty">无结果，换个关键词试试</div>';
-      return;
-    }
-    $list.innerHTML = data.items.map((it, i) => `
+    try {
+      const data = await API.search({ q, kind: state.kind, type: state.type, limit: 500 });
+      $count.textContent = data.total ? `命中 ${data.total} 条` : "";
+      $meta.textContent = data.total
+        ? `「${q}」命中 ${data.total} 条 · 点击卡片可展开官方简介全文`
+        : `「${q}」无命中 · 可尝试更短的关键词，或访问底部官方链接`;
+      if (!data.items.length) {
+        $list.innerHTML = '<div class="result-empty">无结果，换个关键词试试</div>';
+        return;
+      }
+      $list.innerHTML = data.items.map((it, i) => `
       <article class="result-card" data-i="${i}">
         <div class="rc-head" data-id="${esc(it.id)}" data-kind="${esc(it.kind)}">
           <h3>${mark(it.name, q)}</h3>
@@ -75,29 +76,41 @@
         <div class="rc-full" hidden></div>
       </article>`).join("");
 
-    $list.querySelectorAll(".rc-link").forEach((a) =>
-      a.addEventListener("click", (e) => e.stopPropagation()));
+      $list.querySelectorAll(".rc-link").forEach((a) =>
+        a.addEventListener("click", (e) => e.stopPropagation()));
 
-    $list.querySelectorAll(".rc-head").forEach((head) => {
-      head.addEventListener("click", async () => {
-        const card = head.closest(".result-card");
-        const full = card.querySelector(".rc-full");
-        const tog = card.querySelector(".rc-toggle");
-        if (!full.hidden) {
-          full.hidden = true; tog.textContent = "展开全文 ▾"; return;
-        }
-        if (!full.dataset.loaded) {
-          full.innerHTML = "<em>加载中…</em>";
-          full.hidden = false;
-          const rec = await API.knowledge(head.dataset.id);
-          const url = officialUrl({ id: head.dataset.id, kind: head.dataset.kind });
-          full.innerHTML = esc(rec.text || "（无简介）").replace(/\n/g, "<br>") +
-            `<div class="rc-src">站内为公开简介摘录 · 深度内容（保护单位、相关资讯/学术等）请访问 <a href="${url}" target="_blank" rel="noopener">中国非物质文化遗产网官网详情页 ↗</a></div>`;
-          full.dataset.loaded = "1";
-        }
-        full.hidden = false; tog.textContent = "收起 ▴";
+      $list.querySelectorAll(".rc-head").forEach((head) => {
+        head.addEventListener("click", async () => {
+          const card = head.closest(".result-card");
+          const full = card.querySelector(".rc-full");
+          const tog = card.querySelector(".rc-toggle");
+          if (!full.hidden) {
+            full.hidden = true; tog.textContent = "展开全文 ▾"; return;
+          }
+          if (!full.dataset.loaded) {
+            full.innerHTML = "<em>加载中…</em>";
+            full.hidden = false;
+            try {
+              const rec = await API.knowledge(head.dataset.id);
+              const url = officialUrl({ id: head.dataset.id, kind: head.dataset.kind });
+              full.innerHTML = esc(rec.text || "（无简介）").replace(/\n/g, "<br>") +
+                `<div class="rc-src">站内为公开简介摘录 · 深度内容（保护单位、相关资讯/学术等）请访问 <a href="${url}" target="_blank" rel="noopener">中国非物质文化遗产网官网详情页 ↗</a></div>`;
+              full.dataset.loaded = "1";
+            } catch (e) {
+              full.innerHTML = "<em>简介加载失败：" + esc(String((e && e.message) || e)) +
+                "（完整版请先运行 python guard.py；双击打开请改用在线地址或 http.server）</em>";
+            }
+          }
+          full.hidden = false; tog.textContent = "收起 ▴";
+        });
       });
-    });
+    } catch (e) {
+      $count.textContent = "";
+      $meta.textContent = "";
+      $list.innerHTML = '<div class="result-empty">无法连接数据服务：' + esc(String((e && e.message) || e)) +
+        '<br>完整版请先运行 <b>python guard.py</b>；静态版请在 static-site 目录运行 <b>python -m http.server 8000</b>' +
+        '；若为双击打开（页面空白），请改用在线地址或上述方式</div>';
+    }
   }
 
   document.getElementById("btn-search").addEventListener("click", search);

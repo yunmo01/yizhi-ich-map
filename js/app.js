@@ -46,6 +46,7 @@
   }
 
   function updateAll(summary) {
+    clearFatal();
     window.ChartMap.update(summary.by_province, state.filter.province);
     window.ChartType.update(summary.by_type);
     window.ChartBatch.update(summary.by_batch);
@@ -71,10 +72,14 @@
     syncURL();
     renderTags();
     const my = ++seq;
-    const summary = await API.summary(state.filter);
-    if (my !== seq) return; // 竞态保护：丢弃过期响应
-    updateAll(summary);
-    if (roster.open) loadRoster();
+    try {
+      const summary = await API.summary(state.filter);
+      if (my !== seq) return; // 竞态保护：丢弃过期响应
+      updateAll(summary);
+      if (roster.open) loadRoster();
+    } catch (e) {
+      if (my === seq) showFatal(e);
+    }
   }
 
   /* ---------- 名单弹层（从数字到人 + CSV 导出） ---------- */
@@ -90,20 +95,41 @@
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
+  /* ---------- 异常提示条（数据加载失败兜底，不再静默白屏） ---------- */
+  function clearFatal() {
+    const bar = document.getElementById("fatal-bar");
+    if (bar) bar.remove();
+  }
+  function showFatal(err) {
+    clearFatal();
+    const bar = document.createElement("div");
+    bar.id = "fatal-bar";
+    bar.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:99998;" +
+      "background:#5d1a1a;color:#ffd9d9;padding:9px 44px 9px 16px;font:13px/1.7 'Microsoft YaHei',sans-serif;" +
+      "box-shadow:0 2px 12px rgba(0,0,0,.45)";
+    bar.innerHTML = "数据加载失败：" + esc(String((err && err.message) || err)) +
+      " —— 完整版请先运行 <b>python guard.py</b>；静态版请在 static-site 目录运行 <b>python -m http.server 8000</b>" +
+      "；若为双击打开（页面空白），请改用在线地址或上述方式。" +
+      '<button id="fatal-x" style="position:absolute;right:10px;top:5px;background:none;border:0;color:#ffd9d9;font-size:17px;cursor:pointer">×</button>';
+    document.body.appendChild(bar);
+    document.getElementById("fatal-x").onclick = clearFatal;
+  }
+
   async function loadRoster() {
     const my = ++roster.seq;
     document.getElementById("roster-scope").textContent = rosterScopeText();
-    document.getElementById("roster-list").innerHTML = '<p class="rm-loading">正在载入…</p>';
-    const data = await API.inheritors({ ...state.filter, limit: 200 });
-    if (my !== roster.seq || !roster.open) return;
-    document.getElementById("roster-count").textContent =
-      `共 ${window.fmt(data.total)} 位 · 显示前 ${data.items.length} 条（导出 CSV 查看全部）`;
     const list = document.getElementById("roster-list");
-    if (!data.items.length) {
-      list.innerHTML = '<p class="rm-loading">当前口径无记录</p>';
-      return;
-    }
-    list.innerHTML = data.items.map((r) => `
+    list.innerHTML = '<p class="rm-loading">正在载入…</p>';
+    try {
+      const data = await API.inheritors({ ...state.filter, limit: 200 });
+      if (my !== roster.seq || !roster.open) return;
+      document.getElementById("roster-count").textContent =
+        `共 ${window.fmt(data.total)} 位 · 显示前 ${data.items.length} 条（导出 CSV 查看全部）`;
+      if (!data.items.length) {
+        list.innerHTML = '<p class="rm-loading">当前口径无记录</p>';
+        return;
+      }
+      list.innerHTML = data.items.map((r) => `
       <div class="rm-row">
         <b class="rm-name">${esc(r.name)}</b>
         <span class="rm-proj">${esc(r.project)}</span>
@@ -111,6 +137,11 @@
         <span class="rm-region">${esc(r.region)}</span>
         <a class="rm-link" href="search.html?q=${encodeURIComponent(r.name)}" target="_blank" rel="noopener">检索 ↗</a>
       </div>`).join("");
+    } catch (e) {
+      if (my !== roster.seq) return;
+      list.innerHTML = '<p class="rm-loading">名单加载失败：' + esc(String((e && e.message) || e)) +
+        '（完整版请先运行 python guard.py；双击打开请改用在线地址或 http.server）</p>';
+    }
   }
 
   async function exportRosterCSV() {
@@ -132,9 +163,11 @@
       a.download = `传承人名单_${rosterScopeText().replace(/[ ·]/g, "_")}_${data.total}条.csv`;
       a.click();
       URL.revokeObjectURL(a.href);
+      btn.textContent = old;
+    } catch (e) {
+      btn.textContent = "导出失败，请重试";
     } finally {
       btn.disabled = false;
-      btn.textContent = old;
     }
   }
 
@@ -223,5 +256,7 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", boot);
+  document.addEventListener("DOMContentLoaded", () => {
+    boot().catch((e) => showFatal(e));
+  });
 })();
